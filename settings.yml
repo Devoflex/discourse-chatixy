@@ -1,0 +1,21 @@
+# Discourse theme settings.
+#
+# Theme settings live HERE, in settings.yml at the theme root - NOT in
+# about.json. about.json carries the theme's identity/metadata only
+# (name, component, about_url, license_url, authors). Discourse reads this
+# file, renders a form for each key under
+#   Admin -> Customize -> Themes -> Chatixy AI Chat -> Settings,
+# and exposes the values to the theme's JavaScript as a global `settings`
+# object (dot notation: settings.widget_key).
+#
+# Types: bool | integer | float | string | list | enum | upload.
+
+enabled:
+  type: bool
+  default: true
+  description: "Load the Chatixy AI chat widget on this forum. Turn this off to hide the widget without uninstalling the component."
+
+widget_key:
+  type: string
+  default: ""
+  description: "Your Chatixy widget key: the 64-character hex string from your Chatixy dashboard (Install tab). Pasting the whole <script> snippet also works - only the key is used. Leave blank to keep the widget off."

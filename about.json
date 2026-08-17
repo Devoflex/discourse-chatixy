@@ -1,0 +1,8 @@
+{
+  "name": "Chatixy AI Chat",
+  "component": true,
+  "about_url": "https://chatixy.com/integrations/discourse",
+  "license_url": "https://github.com/Devoflex/discourse-chatixy/blob/main/LICENSE",
+  "authors": "Chatixy",
+  "learn_more": "https://chatixy.com/support"
+}

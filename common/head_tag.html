@@ -1,0 +1,51 @@
+<script type="text/discourse-plugin" version="0.8">
+  // Chatixy AI Chat - Discourse theme component.
+  //
+  // Every Chatixy integration does the same job: bind a widget_key and inject
+  //   <script src="https://chatixy.com/source/<64-hex-key>.js?platform=discourse" async>
+  // Here the injection point is common/head_tag.html, which Discourse renders
+  // into <head> on every page. A `type="text/discourse-plugin"` block is
+  // compiled as theme JavaScript, which is the context where Discourse exposes
+  // the settings declared in settings.yml as the global `settings` object
+  // (dot notation - there is no {{theme-setting}} mustache for raw HTML files).
+  //
+  // Discourse is a single-page app: head_tag runs once per full page load, and
+  // the injected loader keeps running across in-app navigation. The id guard
+  // below makes a second run (e.g. a theme reload in dev) a no-op.
+  (function () {
+    // Defensive: if `settings` is ever not in scope, degrade to "off" rather
+    // than throwing a ReferenceError that would take out the rest of the
+    // theme's JavaScript.
+    var cfg = (typeof settings !== "undefined" && settings) || {};
+
+    if (cfg.enabled === false) {
+      return;
+    }
+
+    // SECURITY: the key is admin-supplied (a theme setting), and it is about to
+    // land in a <script src> on every page of the forum. So it is never
+    // interpolated as typed. We pull the first 64-hex run out of whatever was
+    // pasted - bare key, "<key>.js", or the whole embed snippet - and then
+    // re-assert the full-string shape. Anything else yields no script at all.
+    // The origin is a hard-coded literal, never a setting, so there is no
+    // admin-controlled way to point the tag at another host.
+    var raw = String(cfg.widget_key == null ? "" : cfg.widget_key)
+      .trim()
+      .toLowerCase();
+    var found = raw.match(/[a-f0-9]{64}/);
+    var key = found ? found[0] : "";
+    if (!/^[a-f0-9]{64}$/.test(key)) {
+      return;
+    }
+
+    if (document.getElementById("chatixy-widget-loader")) {
+      return;
+    }
+
+    var el = document.createElement("script");
+    el.id = "chatixy-widget-loader";
+    el.async = true;
+    el.src = "https://chatixy.com/source/" + key + ".js?platform=discourse";
+    document.head.appendChild(el);
+  })();
+</script>
